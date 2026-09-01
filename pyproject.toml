@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "ds-maintenance-app"
+version = "1.6.0"
+description = ""
+authors = ["Corey Jenkins <corey.jenkins@roadsurfer.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11.9"
+pytest = "^8.3.3"
+black = "^24.10.0"
+flake8 = "^7.1.1"
+pandas = "^2.3.3"
+ds-package-forecast = {version = "1.6.1", source = "ds-packages"}
+ds-package-anomaly-detection = {version = "1.2.0", source = "ds-packages"}
+ds-package-gcp = {version = "1.1.0", source = "ds-packages"}
+pyyaml = "^6.0.3"
+google-cloud-bigquery = "^3.40.1"
+db-dtypes = "^1.5.0"
+google-cloud-bigquery-storage = "^2.36.1"
+pandas-gbq = "^0.33.0"
+xgboost = "^3.2.0"
+mlforecast = "1.0.2"
+
+[[tool.poetry.source]]
+name = "ds-packages"
+url = "https://europe-west3-python.pkg.dev/sf-da-dwh/ds-packages/simple"
+priority = "explicit"
+
+# Local-only tooling for exploratory data analysis in notebooks. Optional so it
+# is skipped by `poetry install`/CI and never ships in the built wheel. Install
+# with `poetry install --with eda`.
+[tool.poetry.group.eda]
+optional = true
+
+[tool.poetry.group.eda.dependencies]
+ipykernel = "^7.3.0"
+matplotlib = "^3.11.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

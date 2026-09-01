@@ -1,0 +1,106 @@
+data:
+  database: ds_features_maintenance
+  features_table: features_final
+  output_dataset: ds_predictions_maintenance
+  measurement_columns:
+    - gmx_odometer
+    - gmx_service_oil_interval_distance
+    - gmx_service_oil_interval_percent
+    - gmx_service_vehicle_interval_distance
+  id_column: vin
+  date_column: updated_date
+  preprocess_output:
+    features_table: final_training_features_preprocessed
+    future_table: final_future_features_preprocessed
+  metrics_table: backtest_metrics
+  valid_cars_table: valid_cars
+  monitoring_dataset: ds_monitoring_maintenance
+  monitoring_output:
+    zero_crossings_table: tcu_service_zero_crossings
+    resets_table: tcu_service_resets
+
+preprocess:
+  gap_cutoff_days: 90
+  blocked_column: is_blocked
+  booked_column: is_booked
+  measurement_substitution:
+    target: gmx_service_oil_interval_distance
+    reference: gmx_service_oil_interval_percent
+  hampel_filter:
+    gmx_service_oil_interval_percent:
+      neighbours: 2
+      threshold: 3
+    gmx_odometer:
+      neighbours: 2
+      threshold: 2.5
+    gmx_service_vehicle_interval_distance:
+      neighbours: 2
+      threshold: 2.5
+    gmx_service_oil_interval_distance:
+      neighbours: 2
+      threshold: 2.5
+  odometer:
+    column: gmx_odometer
+    decrease_cutoff: -12
+  nullify_unrealistic_changes_decaying:
+    gmx_service_oil_interval_percent:
+      - -20
+      - 10
+  nullify_unrealistic_changes_rising:
+    gmx_odometer: 10000
+  remove_resets_columns:
+    - gmx_service_oil_interval_percent
+  target_columns:
+    - gmx_odometer
+    - gmx_service_oil_interval_percent
+  service_columns:
+    - gmx_service_oil_interval_distance
+    - gmx_service_oil_interval_percent
+    - gmx_service_vehicle_interval_distance
+
+maintenance_forecast:
+  horizon: 90
+  dynamic_features:
+    - is_blocked
+    - is_available
+    - is_booked
+    - utilization_rate
+    - station_id
+    - is_vehicle_usage_type_normal
+  static_features:
+    - manufacturer
+  odometer:
+    target: gmx_odometer
+  oil_percent:
+    target: gmx_service_oil_interval_percent
+  xgb_hyperparameters:
+    enable_categorical: True
+    gamma: 1.594588638458853
+    learning_rate: 0.02636738566366008
+    max_depth: 3
+    min_child_weight: 2
+    n_estimators: 134
+    reg_alpha: 0.43717622514856824
+    reg_lambda: 0.443724873090308
+  lags:
+    - 1
+    - 2
+    - 3
+    - 5
+    - 7
+  date_features:
+    - "month"
+  n_windows_list: 
+    - 4
+    - 2
+    - 0
+  backtest:
+    n_windows: 3
+    horizon: 90
+
+postprocess:
+  is_blocked: 1
+
+output:
+  vehicle_service_distance: gmx_service_vehicle_interval_distance
+  oil_service_distance: gmx_service_oil_interval_distance

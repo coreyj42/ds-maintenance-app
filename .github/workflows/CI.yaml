@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build:
+    name: Test, Lint, and Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      - name: Authorize the below actions
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Install Poetry for dependencies management
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          poetry self add keyring keyrings.google-artifactregistry-auth
+
+      - name: Run Make commands
+        run: |
+          make all
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git diff --exit-code --quiet || (echo "::error::Code is not formatted properly. Please run 'make format' and commit the changes." && exit 1)

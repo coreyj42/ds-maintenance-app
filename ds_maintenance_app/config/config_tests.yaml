@@ -1,0 +1,17 @@
+preprocess:
+  hampel_filter:
+    x:
+      neighbours: 2
+      threshold: 3
+  nullify_decreased_measurements:
+    gmx_odometer:
+      -12
+  nullify_unrealistic_changes_decaying:
+    x:
+      - -20
+      - 500
+  nullify_unrealistic_changes_rising:
+    x: 10
+
+postprocess:
+  dynamic_feature: 0

@@ -1,0 +1,4 @@
+Makefile text eol=lf
+README.md text eol=lf
+.flake8 text eol=lf
+.gitignore text eol=lf

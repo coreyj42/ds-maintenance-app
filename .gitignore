@@ -1,0 +1,25 @@
+# Poetry artifacts
+dist/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+ds_maintenance_app/notebooks/
+
+# Python
+__pycache__
+
+# Test data
+data/*
+
+# Claude
+./CLAUDE.local.md
